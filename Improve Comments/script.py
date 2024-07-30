@@ -82,14 +82,6 @@ def process_file(file_path, results):
             results['modified_files'] += 1
     
         results['processed_files'] += 1
-        
-        # Write the improved content back to the file
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(new_content)
-            print(f"File modified: {file_path}")
-            results['modified_files'] += 1
-    
-        results['processed_files'] += 1
     
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
