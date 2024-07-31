@@ -1,4 +1,5 @@
 import os
+import subprocess
 import re
 import sys
 import time
@@ -25,7 +26,7 @@ openai.api_key = OPENAI_API_KEY
 
 def improve_comments(text):
     prompt = (
-        "I have the following C# code. I need you to correct and improve the comments without modifying the code, "
+        "I have the following C# code. I need you to correct and improve the comments without modifying the code. "
         "Maintain the original indentation and ensure that the comments are clear, precise. Do not include any introductory phrases or markdown formatting in your response.\n\n"
         "{}"
     ).format(text)
@@ -63,11 +64,7 @@ def process_file(file_path, results):
         for match in matches:
             comment_text = match.group(0)
             
-            print(f"comment_text: {comment_text}")
-            
             improved_comment = improve_comments(comment_text)
-            
-            print(f"improved_comment: {improved_comment}")
             
             # Replace the original comment with the improved one in the new content
             new_content += content[last_index:match.start()] + improved_comment
@@ -80,6 +77,14 @@ def process_file(file_path, results):
             file.write(new_content)
             print(f"File modified: {file_path}")
             results['modified_files'] += 1
+    
+        # Formatting c# code
+        command = ['dotnet-format', '--folder', '--include', file_path]
+        try:
+             subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        except subprocess.CalledProcessError as e:
+            print("Error during formatting.")
+            print(e.stderr)
     
         results['processed_files'] += 1
     
