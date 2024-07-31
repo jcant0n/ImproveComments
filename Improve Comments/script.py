@@ -91,7 +91,7 @@ def process_file(file_path, results):
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
 
-def list_cs_files(directory, max_workers):
+def list_cs_files(directory, max_workers, include_subdirectories):
     # Check if the directory exists
     if not os.path.isdir(directory):
         print(f"The directory {directory} does not exist.")
@@ -102,12 +102,17 @@ def list_cs_files(directory, max_workers):
     files_to_process = []
     results = {'processed_files': 0, 'modified_files': 0}
     
-    # Walk through all directories and files
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            # Check if the file has a .cs extension
-            if file.endswith('.cs'):
-                file_path = os.path.join(root, file)
+    # Walk through directories and files based on include_subdirectories
+    if include_subdirectories:
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if file.endswith('.cs'):
+                    file_path = os.path.join(root, file)
+                    files_to_process.append(file_path)
+    else:
+        for file in os.listdir(directory):
+            file_path = os.path.join(directory, file)
+            if os.path.isfile(file_path) and file.endswith('.cs'):
                 files_to_process.append(file_path)
                 
     # Process files in parallel
@@ -130,9 +135,11 @@ def list_cs_files(directory, max_workers):
 if __name__ == "__main__":
     # Check if the directory has been passed as an argument
     if len(sys.argv) < 2:
-        print("Usage: python script.py <baseDirectory> [<max_workers>]")
+        print("Usage: python script.py <baseDirectory> [<max_workers>] [<include_subdirectories>]")
         sys.exit(1)
 
     directory = sys.argv[1]
     max_workers = int(sys.argv[2]) if len(sys.argv) > 2 else 1
-    list_cs_files(directory, max_workers)
+    include_subdirectories = sys.argv[3].lower() == 'true' if len(sys.argv) > 3 else True
+    
+    list_cs_files(directory, max_workers, include_subdirectories)
