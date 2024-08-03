@@ -26,10 +26,12 @@ openai.api_key = OPENAI_API_KEY
 
 def improve_comments(text):
     prompt = (
-        "I have the following C# code. I need you to correct and improve the comments without modifying the code. "
-        "Maintain the original indentation and ensure that the comments are clear, precise. Do not include any introductory phrases or markdown formatting in your response.\n\n"
-        "{}"
-    ).format(text)
+    "I have the following C# code. Please correct the grammar in the comments without modifying the code or altering the indentation. Ensure that the comments remain clear and precise. "
+    "Do not modify the beginning of comments starting with 'Gets ...' or 'Gets or sets ...', but correct any errors in the rest of the comment. "
+    "Do not modify constructor comments that start with 'Initializes a new instance of the ...'. "
+    "Do not include any introductory phrases or markdown formatting in your response.\n\n"
+    "{}"
+).format(text)
 
     response = openai.chat.completions.create(
         model="gpt-4o",
