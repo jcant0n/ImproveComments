@@ -29,6 +29,7 @@ def improve_comments(text):
     "I have the following C# code. Please correct the grammar in the comments without modifying the code or altering the indentation. Ensure that the comments remain clear and precise. "
     "Do not modify the beginning of comments starting with 'Gets ...' or 'Gets or sets ...', but correct any errors in the rest of the comment. "
     "Do not modify constructor comments that start with 'Initializes a new instance of the ...'. "
+    "Do not modify static constructor comments that start with 'Initializes static members of the ...'."
     "Do not include any introductory phrases or markdown formatting in your response.\n\n"
     "{}"
 ).format(text)
